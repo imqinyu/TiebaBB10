@@ -60,7 +60,6 @@
 - Oleksandr：提供越狱漏洞和工具
 - wesley：赞助GPT6
 - Pablo from WaitBerry：提供参考文档
-- Github NeteaseCloudMusicApiEnhanced 项目：提供网易云接口
 - Anwar Ludin、Davenson Lombard：提供免费的黑莓开发教程
 - TiebaLite项目：提供参考
 - 以及所有支持我的 AI 朋友们
