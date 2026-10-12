@@ -1,0 +1,51 @@
+/*
+ * bb/system/InvokeReplyError 的最小替身（仅本机编译检查用）
+ *
+ * 真机定义（已核对 NDK 的 bb/system/InvokeReplyError.hpp）：
+ *
+ *     class BB_SYSTEM_EXPORT InvokeReplyError
+ *     {
+ *         Q_OBJECT
+ *         Q_ENUMS(Type)
+ *     public:
+ *         enum Type {
+ *             None                   = 0,
+ *             NoTarget               = 1,   // 没有这个 target（名字不对）
+ *             BadRequest             = 2,   // 请求不合法
+ *             Internal               = 3,
+ *             TargetNotOwned         = 4,
+ *             InsufficientPrivileges = 5,
+ *             Target                 = 6    // 目标存在但执行失败
+ *         };
+ *     };
+ *
+ * ★ 这个文件不会进入 bar 包。
+ */
+
+#ifndef TB_TEST_STUB_INVOKEREPLYERROR_HPP
+#define TB_TEST_STUB_INVOKEREPLYERROR_HPP
+
+#include <QObject>
+
+namespace bb {
+namespace system {
+
+class InvokeReplyError
+{
+    Q_GADGET
+public:
+    enum Type {
+        None                   = 0,
+        NoTarget               = 1,
+        BadRequest             = 2,
+        Internal               = 3,
+        TargetNotOwned         = 4,
+        InsufficientPrivileges = 5,
+        Target                 = 6
+    };
+};
+
+} // namespace system
+} // namespace bb
+
+#endif // TB_TEST_STUB_INVOKEREPLYERROR_HPP

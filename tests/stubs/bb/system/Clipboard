@@ -1,0 +1,70 @@
+/*
+ * bb/system/Clipboard 的最小替身（仅本机编译检查用）
+ *
+ * 真机签名（已核对 NDK 的 bb/system/Clipboard.hpp）：
+ *
+ *     class BB_SYSTEM_EXPORT Clipboard : public QObject
+ *     {
+ *     public:
+ *         explicit Clipboard(QObject *parent = 0);
+ *         virtual ~Clipboard();
+ *
+ *         bool contains(const QString &type, bool *restricted = 0) const;
+ *         QByteArray value(const QString &type, bool *restricted = 0) const;
+ *         bool insert(const QString &type, const QByteArray &data);
+ *         bool remove(const QString &type);
+ *     };
+ *
+ * ★ 注意 insert() 收的是 **QByteArray**，不是 QString ——
+ *   所以复制文本时要自己 toUtf8()。这个桩把签名照抄，
+ *   本机编译检查才能发现"传了 QString"这种错。
+ *
+ * ★ 这个文件不会进入 bar 包。
+ */
+
+#ifndef TB_TEST_STUB_CLIPBOARD_HPP
+#define TB_TEST_STUB_CLIPBOARD_HPP
+
+#include <QByteArray>
+#include <QObject>
+#include <QString>
+
+namespace bb {
+namespace system {
+
+class Clipboard : public QObject
+{
+public:
+    explicit Clipboard(QObject *parent = 0) : QObject(parent) {}
+    virtual ~Clipboard() {}
+
+    bool contains(const QString &type, bool *restricted = 0) const
+    {
+        Q_UNUSED(type); Q_UNUSED(restricted);
+        return false;
+    }
+
+    QByteArray value(const QString &type, bool *restricted = 0) const
+    {
+        Q_UNUSED(type); Q_UNUSED(restricted);
+        return QByteArray();
+    }
+
+    /*! 本机替身：什么都不做，直接报成功。 */
+    bool insert(const QString &type, const QByteArray &data)
+    {
+        Q_UNUSED(type); Q_UNUSED(data);
+        return true;
+    }
+
+    bool remove(const QString &type)
+    {
+        Q_UNUSED(type);
+        return true;
+    }
+};
+
+} // namespace system
+} // namespace bb
+
+#endif // TB_TEST_STUB_CLIPBOARD_HPP

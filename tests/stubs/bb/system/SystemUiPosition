@@ -1,0 +1,31 @@
+/*
+ * bb/system/SystemUiPosition 的最小替身（仅本机编译检查用）
+ *
+ * 真机定义（NDK bb/system/SystemUiPosition.hpp）：
+ *     enum Type { MiddleCenter = 0, TopCenter = 1, BottomCenter = 2 };
+ *
+ * ★ 这个文件不会进入 bar 包。
+ */
+#ifndef TB_TEST_STUB_SYSTEMUIPOSITION_HPP
+#define TB_TEST_STUB_SYSTEMUIPOSITION_HPP
+
+#include <QObject>
+
+namespace bb {
+namespace system {
+
+class SystemUiPosition
+{
+    Q_GADGET
+public:
+    enum Type {
+        MiddleCenter = 0,
+        TopCenter    = 1,
+        BottomCenter = 2
+    };
+};
+
+} // namespace system
+} // namespace bb
+
+#endif // TB_TEST_STUB_SYSTEMUIPOSITION_HPP

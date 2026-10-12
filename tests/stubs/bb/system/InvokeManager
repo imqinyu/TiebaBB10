@@ -1,0 +1,41 @@
+/*
+ * bb/system/InvokeManager 的最小替身（仅本机编译检查用）
+ *
+ * 真机签名（已核对 NDK 的 bb/system/InvokeManager.hpp）：
+ *     InvokeTargetReply* invoke(const InvokeRequest &request);
+ *
+ * 注意：invoke() 返回的是 InvokeTargetReply*，**不是** InvokeReplyError。
+ * （我一开始按 InvokeReplyError::Type 写，被这个存根的前置核对纠正了。）
+ *
+ * ★ 这个文件不会进入 bar 包。
+ */
+
+#ifndef TB_TEST_STUB_INVOKEMANAGER_HPP
+#define TB_TEST_STUB_INVOKEMANAGER_HPP
+
+#include <QObject>
+
+#include <bb/system/InvokeRequest>
+#include <bb/system/InvokeTargetReply>
+
+namespace bb {
+namespace system {
+
+class InvokeManager : public QObject
+{
+public:
+    explicit InvokeManager(QObject *parent = 0) : QObject(parent) {}
+    virtual ~InvokeManager() {}
+
+    /*! 本机替身：直接返回一个 reply，模拟"目标可用" */
+    InvokeTargetReply *invoke(const InvokeRequest &request)
+    {
+        Q_UNUSED(request);
+        return new InvokeTargetReply(this);
+    }
+};
+
+} // namespace system
+} // namespace bb
+
+#endif // TB_TEST_STUB_INVOKEMANAGER_HPP

@@ -1,0 +1,62 @@
+/*
+ * bb/system/SystemToast 的最小替身（仅本机编译检查用）
+ *
+ * 真机签名（已核对 NDK 的 bb/system/SystemToast.hpp）：
+ *
+ *     class SystemToast : public QObject {
+ *     public:
+ *         void setBody(const QString &body);
+ *         void setPosition(bb::system::SystemUiPosition::Type newPosition);
+ *         Q_INVOKABLE void resetBody();
+ *         Q_INVOKABLE void resetPosition();
+ *         void show();
+ *         void cancel();
+ *     };
+ *
+ * ★ setPosition 收的是 **SystemUiPosition::Type**（枚举），不是 int ——
+ *   这个桩把签名照抄，本机编译检查才能发现"直接传了 int"这种错。
+ *
+ * ★ SystemUiPosition 由单独的同名桩提供（真机上也是独立的头文件）。
+ *   这里**不要**再定义一遍，否则会 redefinition。
+ *
+ * ★ 这个文件不会进入 bar 包。
+ */
+
+#ifndef TB_TEST_STUB_SYSTEMTOAST_HPP
+#define TB_TEST_STUB_SYSTEMTOAST_HPP
+
+#include <QObject>
+#include <QString>
+
+#include <bb/system/SystemUiPosition>
+
+namespace bb {
+namespace system {
+
+class SystemToast : public QObject
+{
+public:
+    explicit SystemToast(QObject *parent = 0) : QObject(parent) {}
+    virtual ~SystemToast() {}
+
+    void setBody(const QString &body) { m_body = body; }
+    QString body() const { return m_body; }
+    void resetBody() { m_body.clear(); }
+
+    void setPosition(SystemUiPosition::Type newPosition) { m_position = newPosition; }
+    SystemUiPosition::Type position() const { return m_position; }
+    void resetPosition() { m_position = SystemUiPosition::MiddleCenter; }
+
+    /*! 本机替身：什么都不做。 */
+    void show() {}
+    void cancel() {}
+
+private:
+    QString m_body;
+    SystemUiPosition::Type m_position;
+};
+
+} // namespace system
+} // namespace bb
+
+#endif // TB_TEST_STUB_SYSTEMTOAST_HPP

@@ -1,0 +1,68 @@
+/*
+ * bb/system/InvokeTargetReply 的最小替身（仅本机编译检查用）
+ *
+ * 真机签名（已核对 NDK 的 bb/system/InvokeTargetReply.hpp 与 InvokeReply.hpp）：
+ *
+ *     class InvokeTargetReply : public InvokeReply
+ *     {
+ *     public:
+ *         bb::system::InvokeReplyError::Type error() const;   // 继承自 InvokeReply
+ *         int errorCode() const;                              // 继承自 InvokeReply
+ *     Q_SIGNALS:
+ *         void finished();                                    // 继承自 InvokeReply
+ *     };
+ *
+ * ★ 关键点（上一版就是在这一点上想错的）：
+ *   invoke() 返回**非空**并不代表目标能执行 —— Invocation 是**异步**的。
+ *   真正成功/失败要等 finished() 之后读 error()。
+ *   所以这个桩必须把 error() / finished() 暴露出来，
+ *   否则本机编译检查会漏掉"忘了听 finished"这类错误。
+ *
+ * ★ 这里**故意不用 Q_OBJECT**：
+ *   run-tests.ps1 只对 src 下的 *.hpp 跑 moc，而这个桩没有 .hpp 扩展名
+ *   （真机头文件就叫 InvokeTargetReply，不带后缀），跑不到 moc。
+ *   带 Q_OBJECT 就会 "undefined reference to vtable"。
+ *   本桩只是给编译检查用的替身，不需要真正的元对象，所以直接继承 QObject
+ *   且不加 Q_OBJECT —— 信号声明成普通函数即可让 SIGNAL(finished()) 编译通过。
+ *
+ * ★ 这个文件不会进入 bar 包。
+ */
+
+#ifndef TB_TEST_STUB_INVOKETARGETREPLY_HPP
+#define TB_TEST_STUB_INVOKETARGETREPLY_HPP
+
+#include <QObject>
+
+#include <bb/system/InvokeReplyError>
+
+namespace bb {
+namespace system {
+
+class InvokeReply : public QObject
+{
+public:
+    explicit InvokeReply(QObject *parent = 0) : QObject(parent) {}
+    ~InvokeReply() {}
+
+    /*! 本机替身：固定返回 None（即"成功"）。真机上要等 finished() 之后才有效。 */
+    InvokeReplyError::Type error() const { return InvokeReplyError::None; }
+    int errorCode() const { return 0; }
+
+    /*! 真机上是 Q_SIGNALS 里的信号；这里声明成普通函数只为让 SIGNAL() 能编译。 */
+    void finished() {}
+
+    /*! 与真机一致：重定向后会先重定向，再由上层调用（本桩不实现重定向）。 */
+    int redirectCount() const { return 0; }
+};
+
+class InvokeTargetReply : public InvokeReply
+{
+public:
+    explicit InvokeTargetReply(QObject *parent = 0) : InvokeReply(parent) {}
+    ~InvokeTargetReply() {}
+};
+
+} // namespace system
+} // namespace bb
+
+#endif // TB_TEST_STUB_INVOKETARGETREPLY_HPP

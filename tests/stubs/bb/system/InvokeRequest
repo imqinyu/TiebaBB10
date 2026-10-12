@@ -1,0 +1,55 @@
+/*
+ * bb/system/InvokeRequest 的最小替身（仅本机编译检查用）
+ *
+ * 开发机上没有 BB10 的 bb/system 头文件，而 TiebaController 用了它来打开
+ * 浏览器（看图片 / 外链）。这里按真机的签名做一个同签名的假实现，
+ * 让 tests/run-tests.ps1 能在桌面 Qt 上验证 TiebaController 与后端层是否还对得上。
+ *
+ * ★ 这个文件不会进入 bar 包。真机构建时用的是 NDK 里的真头文件。
+ *   签名以 NDK 的
+ *     $QNX_TARGET/usr/include/bb/system/InvokeRequest.hpp
+ *   为准（已核对）。
+ */
+
+#ifndef TB_TEST_STUB_INVOKEREQUEST_HPP
+#define TB_TEST_STUB_INVOKEREQUEST_HPP
+
+#include <QByteArray>
+#include <QString>
+#include <QUrl>
+
+namespace bb {
+namespace system {
+
+class InvokeRequest
+{
+public:
+    InvokeRequest() {}
+    ~InvokeRequest() {}
+
+    void setTarget(const QString &name) { m_target = name; }
+    void setAction(const QString &name) { m_action = name; }
+    void setMimeType(const QString &type) { m_mimeType = type; }
+    void setUri(const QUrl &uri) { m_uri = uri; }
+    void setUri(const QString &uri) { m_uri = QUrl(uri); }
+    void setUri(const char *uri) { m_uri = QUrl(QString::fromUtf8(uri)); }
+    void setData(const QByteArray &data) { m_data = data; }
+
+    QString target() const { return m_target; }
+    QString action() const { return m_action; }
+    QString mimeType() const { return m_mimeType; }
+    QUrl uri() const { return m_uri; }
+    QByteArray data() const { return m_data; }
+
+private:
+    QString m_target;
+    QString m_action;
+    QString m_mimeType;
+    QUrl m_uri;
+    QByteArray m_data;
+};
+
+} // namespace system
+} // namespace bb
+
+#endif // TB_TEST_STUB_INVOKEREQUEST_HPP
