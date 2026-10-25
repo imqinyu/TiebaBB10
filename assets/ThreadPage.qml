@@ -404,12 +404,13 @@ Page {
                             horizontalAlignment: HorizontalAlignment.Fill
                             verticalAlignment: VerticalAlignment.Top
                         }
-                        Container {
+                        // Use the same native themed separator as the thread list.
+                        // Keep it mounted while rows are recycled; only floor ends show it.
+                        Divider {
                             visible: itemRoot.rowData.floorEnd === true
-                            preferredHeight: 1
-                            maxHeight: 1
                             horizontalAlignment: HorizontalAlignment.Fill
-                            background: Color.create("#e6e6e6")
+                            topMargin: 0
+                            bottomMargin: 0
                         }
                         attachedObjects: [
                             ComponentDefinition {
